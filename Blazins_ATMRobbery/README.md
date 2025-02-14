@@ -1,7 +1,7 @@
 
 # ATM Robbery Script
 
-This script allows players to rob ATMs in your server using the QB framework, QB Inventory, OX Inventory, and OX Lib for the progress bar and mini-game.
+This script allows players to rob ATMs in your server using the QB framework, QB Inventory, OX Inventory, OKOKNotify, and OX Lib for the progress bar and mini-game.
 
 ## Features
 
@@ -25,6 +25,7 @@ This script allows players to rob ATMs in your server using the QB framework, QB
 3. Make sure you have the required dependencies installed:
     - `qb-core`
     - `ox_lib`
+    - `okokNotify`
     - `ps-dispatch`
 
 ## Configuration

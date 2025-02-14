@@ -7,6 +7,15 @@ local function debugLog(message)
     end
 end
 
+-- Function to show notifications based on the configured system
+local function showNotification(source, title, message, type)
+    if Config.NotificationSystem == 'okokNotify' then
+        TriggerClientEvent('okokNotify:Alert', source, title, message, 5000, type, true)
+    else
+        QBCore.Functions.Notify(message, type, 5000)
+    end
+end
+
 RegisterNetEvent('atm_robbery:start')
 AddEventHandler('atm_robbery:start', function(atmModel)
     local src = source
@@ -20,7 +29,7 @@ AddEventHandler('atm_robbery:start', function(atmModel)
     if cooldowns[playerId] and currentTime < cooldowns[playerId] then
         local remainingTime = cooldowns[playerId] - currentTime
         debugLog('Player is on cooldown for ' .. remainingTime .. ' seconds')
-        TriggerClientEvent('QBCore:Notify', src, 'You must wait ' .. remainingTime .. ' seconds before robbing another ATM!', 'error')
+        showNotification(src, 'Cooldown', 'You must wait ' .. remainingTime .. ' seconds before robbing another ATM!', 'error')
         return
     end
 
@@ -35,7 +44,7 @@ AddEventHandler('atm_robbery:start', function(atmModel)
     
     if not isValidATM then
         debugLog('Invalid ATM model: ' .. atmModel)
-        TriggerClientEvent('QBCore:Notify', src, 'This ATM cannot be hacked!', 'error')
+        showNotification(src, 'Error', 'This ATM cannot be hacked!', 'error')
         return
     end
 
@@ -49,7 +58,7 @@ AddEventHandler('atm_robbery:start', function(atmModel)
     end
 
     if policeCount < Config.MinPoliceOnDuty then
-        TriggerClientEvent('QBCore:Notify', src, 'Not enough police on duty!', 'error')
+        showNotification(src, 'Error', 'Not enough police on duty!', 'error')
         return
     end
 
@@ -58,14 +67,10 @@ AddEventHandler('atm_robbery:start', function(atmModel)
 
     -- Check for required hacking item
     if Config.InventoryType == 'qb' and not player.Functions.HasItem(Config.RequiredItem) then
-        TriggerClientEvent('QBCore:Notify', src, 'You need a hacking phone to hack the ATM!', 'error')
+        showNotification(src, 'Error', 'You need a hacking phone to hack the ATM!', 'error')
         return
     elseif Config.InventoryType == 'ox' and not exports.ox_inventory:Search(src, 'count', Config.RequiredItem) then
-        TriggerClientEvent('ox_lib:notify', src, { 
-            title = 'Error', 
-            description = 'You need a hacking phone to hack the ATM!', 
-            type = 'error' 
-        })
+        showNotification(src, 'Error', 'You need a hacking phone to hack the ATM!', 'error')
         return
     end
 
@@ -81,7 +86,7 @@ AddEventHandler('atm_robbery:success', function()
 
     local reward = math.random(Config.Reward.min, Config.Reward.max)
     player.Functions.AddMoney('cash', reward)
-    TriggerClientEvent('QBCore:Notify', src, 'You successfully hacked the ATM and got $' .. reward .. '!', 'success')
+    showNotification(src, 'ATM Robbery', 'You successfully hacked the ATM and got $' .. reward .. '!', 'success')
 
     -- Set cooldown
     cooldowns[player.PlayerData.citizenid] = os.time() + Config.CooldownTime
@@ -105,10 +110,10 @@ AddEventHandler('atm_robbery:removeHackingPhone', function()
     local Player = QBCore.Functions.GetPlayer(src)
     if Player then
         if Player.Functions.RemoveItem("hacking_phone", 1) then
-            TriggerClientEvent('QBCore:Notify', src, 'You used 1 hacking phone!', 'success')
+            showNotification(src, 'Success', 'You used 1 hacking phone!', 'success')
             TriggerClientEvent('inventory:client:ItemBox', src, QBCore.Shared.Items["hacking_phone"], "remove")
         else
-            TriggerClientEvent('QBCore:Notify', src, 'You do not have a hacking phone!', 'error')
+            showNotification(src, 'Error', 'You do not have a hacking phone!', 'error')
         end
     end
 end)

@@ -1,4 +1,5 @@
 local QBCore = exports['qb-core']:GetCoreObject()
+local lib = exports['ox_lib'] -- Ensure lib is defined
 
 -- Function to check if the player has the hacking phone
 local function hasHackingPhone()
@@ -8,6 +9,17 @@ local function hasHackingPhone()
     end, Config.RequiredItem)
     Wait(200) -- Ensure we wait for the callback result
     return hasItem
+end
+
+-- Function to show notifications based on the configured system
+local function showNotification(title, message, type)
+    if Config.NotificationSystem == '17mov_Hud' then
+        TriggerEvent("17mov_Hud:ShowHelpNotificationWhile", message)
+    elseif Config.NotificationSystem == 'okokNotify' then
+        exports['okokNotify']:Alert(title, message, 5000, type, true)
+    else
+        QBCore.Functions.Notify(message, type, 5000)
+    end
 end
 
 -- Ensure ATM Models exist and add ox_target interactions
@@ -39,8 +51,9 @@ AddEventHandler('atm_robbery:startHacking', function()
         Wait(4000) -- Freeze for 4 seconds
         TriggerServerEvent('atm_robbery:success') -- Give reward
         TriggerServerEvent('atm_robbery:removeHackingPhone') -- Remove item
+        showNotification('ATM Robbery', 'You successfully hacked the ATM!', 'success')
     else
-        TriggerEvent('QBCore:Notify', 'You failed the hacking mini-game!', 'error')
+        showNotification('ATM Robbery', 'You failed the hacking mini-game!', 'error')
     end
 end)
 

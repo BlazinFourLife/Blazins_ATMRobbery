@@ -4,7 +4,7 @@ lua54 'yes'
 
 author 'Blaze Scripts'
 description 'ATM Robbery Script'
-version '1.0.0'
+version '1.0.1'
 
 shared_scripts {
     'config.lua'  -- Ensure this path is correct

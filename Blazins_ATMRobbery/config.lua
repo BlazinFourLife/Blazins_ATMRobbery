@@ -2,6 +2,9 @@ Config = {
     -- Set the inventory type: 'ox' for OX Inventory, 'qb' for QB Inventory
     InventoryType = 'qb',
 
+        -- Set the notification system: '17mov_Hud', 'okokNotify', 'qb'
+    NotificationSystem = '17mov_Hud',
+
     -- Set the required item for hacking the ATM
     RequiredItem = 'hacking_phone',
 
@@ -33,5 +36,6 @@ Config = {
         -1126237515, -- ATM Model 2
         506770882,   -- ATM Model 3
         -1364697528  -- ATM Model 4
-    }
+    },
+
 }
