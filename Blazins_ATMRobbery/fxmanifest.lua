@@ -7,21 +7,19 @@ description 'ATM Robbery Script'
 version '1.0.1'
 
 shared_scripts {
-    'config.lua'  -- Ensure this path is correct
+    'config.lua',
+    '@ox_lib/init.lua'
 }
 
 client_scripts {
-    'client/main.lua'  -- Ensure this path is correct
+    'client/main.lua'
 }
 
 server_scripts {
-    'server/config.lua',  -- Ensure this path is correct
     'server/main.lua'
 }
 
 dependencies {
     'qb-core',
-    'ox_lib',  -- Ensure ox_lib is listed as a dependency
-   --'okokNotify',
-    --'ps-dispatch'
+    'ox_target'
 }

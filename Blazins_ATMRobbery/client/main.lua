@@ -1,5 +1,4 @@
 local QBCore = exports['qb-core']:GetCoreObject()
-local lib = exports['ox_lib'] -- Ensure lib is defined
 
 -- Function to check if the player has the hacking phone
 local function hasHackingPhone()
@@ -7,7 +6,7 @@ local function hasHackingPhone()
     QBCore.Functions.TriggerCallback('atmrobbery:checkItem', function(result)
         hasItem = result
     end, Config.RequiredItem)
-    Wait(200) -- Ensure we wait for the callback result
+    Wait(200) 
     return hasItem
 end
 
@@ -22,7 +21,7 @@ local function showNotification(title, message, type)
     end
 end
 
--- Ensure ATM Models exist and add ox_target interactions
+
 CreateThread(function()
     if Config.ATMModels and #Config.ATMModels > 0 then
         exports.ox_target:addModel(Config.ATMModels, {
