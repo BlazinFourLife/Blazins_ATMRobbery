@@ -16,6 +16,12 @@ local function showNotification(title, message, type)
         TriggerEvent("17mov_Hud:ShowHelpNotificationWhile", message)
     elseif Config.NotificationSystem == 'okokNotify' then
         exports['okokNotify']:Alert(title, message, 5000, type, true)
+    elseif Config.NotificationSystem == 'ox_lib' then
+        TriggerClientEvent('ox_lib:notify', source, {
+            title = title,
+            description = message,
+            type = type
+        })
     else
         QBCore.Functions.Notify(message, type, 5000)
     end
