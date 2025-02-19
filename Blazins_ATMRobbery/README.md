@@ -25,7 +25,6 @@ This script allows players to rob ATMs in your server using the QB framework, QB
 3. Make sure you have the required dependencies installed:
     - `qb-core`
     - `ox_lib`
-    - `okokNotify`
     - `ps-dispatch`
 
 ## Configuration
@@ -64,6 +63,18 @@ Config.ATMModels = {
     'prop_atm
 }
 
+## Add to your ps-dipatch/config.lua
+    ['atmrobberyInProgress'] = {
+    radius = 0,
+    sprite = 434,
+    color = 1,
+    scale = 1.5,
+    length = 2,
+    sound = 'Lose_1st',
+    sound2 = 'GTAO_FM_Events_Soundset',
+    offset = false,
+    flash = false
+    },
 ## Acknowledgments
 
 Special thanks to Kingy for helping with the target development of this script.

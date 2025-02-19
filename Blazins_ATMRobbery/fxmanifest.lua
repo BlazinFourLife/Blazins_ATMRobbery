@@ -21,5 +21,6 @@ server_scripts {
 
 dependencies {
     'qb-core',
-    'ox_target'
+    'ox_lib',
+    'ps-dispatch'
 }

@@ -1,0 +1,11 @@
+["hacking_phone"] = {
+        label = "Hacking Phone",
+        weight = 200,
+        stack = true,
+        client = {
+            image = "hacking_phone.png", -- Replace with the correct path to your image.
+        },
+        description = "A phone used for hacking ATMs."
+},
+
+

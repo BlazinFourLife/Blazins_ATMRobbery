@@ -1,16 +1,15 @@
 local QBCore = exports['qb-core']:GetCoreObject()
+local lib = exports['ox_lib']
 
--- Function to check if the player has the hacking phone
 local function hasHackingPhone()
     local hasItem = false
     QBCore.Functions.TriggerCallback('atmrobbery:checkItem', function(result)
         hasItem = result
     end, Config.RequiredItem)
-    Wait(200) 
+    Wait(200)
     return hasItem
 end
 
--- Function to show notifications based on the configured system
 local function showNotification(title, message, type)
     if Config.NotificationSystem == '17mov_Hud' then
         TriggerEvent("17mov_Hud:ShowHelpNotificationWhile", message)
@@ -27,7 +26,6 @@ local function showNotification(title, message, type)
     end
 end
 
-
 CreateThread(function()
     if Config.ATMModels and #Config.ATMModels > 0 then
         exports.ox_target:addModel(Config.ATMModels, {
@@ -39,51 +37,64 @@ CreateThread(function()
                     TriggerServerEvent('atm_robbery:start', GetEntityModel(data.entity))
                 end,
                 canInteract = function(entity, distance, data)
-                    return hasHackingPhone() -- Only allow interaction if the player has the item
+                    return hasHackingPhone()
                 end
             }
-        }, 2.5) -- Distance parameter outside the table
+        }, 2.5)
     end
 end)
 
--- Start hacking event
 RegisterNetEvent('atm_robbery:startHacking')
 AddEventHandler('atm_robbery:startHacking', function()
     local success = exports.ox_lib:skillCheck({'easy', 'easy', 'medium'}, {'w', 'a', 's', 'd'})
+    local function ATMRobberyAlert()
+        local ped = PlayerPedId()
+        local coords = GetEntityCoords(ped)
+        
+        local streetHash, crossingRoadHash = GetStreetNameAtCoord(coords.x, coords.y, coords.z)
+        local streetName = GetStreetNameFromHashKey(streetHash)
+        
+        local dispatchData = {
+            message = ('atm_robbery_in_progress'),
+            codeName = 'atmrobberyInProgress',
+            code = '10-84',
+            icon = 'fas fa-money-check-alt',
+            priority = 2,
+            coords = coords,
+            street = streetName,
+            jobs = { 'leo' }
+        }
+        
+        TriggerServerEvent('ps-dispatch:server:notify', dispatchData)
+    end
+    
+    exports('ATMRobberyAlert', ATMRobberyAlert)
 
     if success then
-        TriggerEvent('atm_robbery:playAnimation') -- Play animation
-        Wait(4000) -- Freeze for 4 seconds
-        TriggerServerEvent('atm_robbery:success') -- Give reward
-        TriggerServerEvent('atm_robbery:removeHackingPhone') -- Remove item
+        TriggerEvent('atm_robbery:playAnimation')
+        Wait(4000)
+        TriggerServerEvent('atm_robbery:success')
+        TriggerServerEvent('atm_robbery:removeHackingPhone')
         showNotification('ATM Robbery', 'You successfully hacked the ATM!', 'success')
     else
         showNotification('ATM Robbery', 'You failed the hacking mini-game!', 'error')
     end
 end)
 
--- Play ATM Robbery Animation
 RegisterNetEvent('atm_robbery:playAnimation')
 AddEventHandler('atm_robbery:playAnimation', function()
     local playerPed = PlayerPedId()
 
-    -- Freeze Player
     FreezeEntityPosition(playerPed, true)
-
-    -- Load animation dictionary
     local dict = 'anim@heists@ornate_bank@grab_cash'
     RequestAnimDict(dict)
     while not HasAnimDictLoaded(dict) do
         Wait(10)
     end
 
-    -- Play animation
     TaskPlayAnim(playerPed, dict, 'grab', 8.0, -8.0, 4000, 1, 0, false, false, false)
 
-    -- Wait for animation to finish
     Wait(4000)
-
-    -- Stop animation and unfreeze player
     ClearPedTasks(playerPed)
     FreezeEntityPosition(playerPed, false)
 end)

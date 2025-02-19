@@ -7,7 +7,6 @@ local function debugLog(message)
     end
 end
 
--- Function to show notifications based on the configured system
 local function showNotification(source, title, message, type)
     if Config.NotificationSystem == 'okokNotify' then
         TriggerClientEvent('okokNotify:Alert', source, title, message, 5000, type, true)
@@ -25,7 +24,6 @@ AddEventHandler('atm_robbery:start', function(atmModel)
     local playerId = player.PlayerData.citizenid
     local currentTime = os.time()
 
-    -- Check for cooldown
     if cooldowns[playerId] and currentTime < cooldowns[playerId] then
         local remainingTime = cooldowns[playerId] - currentTime
         debugLog('Player is on cooldown for ' .. remainingTime .. ' seconds')
@@ -33,7 +31,6 @@ AddEventHandler('atm_robbery:start', function(atmModel)
         return
     end
 
-    -- Validate ATM model
     local isValidATM = false
     for _, model in ipairs(Config.ATMModels) do
         if model == atmModel then
@@ -48,7 +45,6 @@ AddEventHandler('atm_robbery:start', function(atmModel)
         return
     end
 
-    -- Check for minimum police on duty
     local policeCount = 0
     for _, playerId in ipairs(QBCore.Functions.GetPlayers()) do
         local officer = QBCore.Functions.GetPlayer(playerId)
@@ -62,10 +58,8 @@ AddEventHandler('atm_robbery:start', function(atmModel)
         return
     end
 
-    -- Notify police using PS Dispatch
-    TriggerEvent('ps-dispatch:client:atmRobbery', player.PlayerData.coords)
+    TriggerClientEvent('atm_robbery:triggerClientAlert', src)
 
-    -- Check for required hacking item
     if Config.InventoryType == 'qb' and not player.Functions.HasItem(Config.RequiredItem) then
         showNotification(src, 'Error', 'You need a hacking phone to hack the ATM!', 'error')
         return
@@ -74,7 +68,6 @@ AddEventHandler('atm_robbery:start', function(atmModel)
         return
     end
 
-    -- Start hacking mini-game
     TriggerClientEvent('atm_robbery:startHacking', src)
 end)
 
@@ -88,11 +81,9 @@ AddEventHandler('atm_robbery:success', function()
     player.Functions.AddMoney('cash', reward)
     showNotification(src, 'ATM Robbery', 'You successfully hacked the ATM and got $' .. reward .. '!', 'success')
 
-    -- Set cooldown
     cooldowns[player.PlayerData.citizenid] = os.time() + Config.CooldownTime
 end)
 
--- Callback to check if the player has the required item
 QBCore.Functions.CreateCallback('atmrobbery:checkItem', function(source, cb, itemName)
     local Player = QBCore.Functions.GetPlayer(source)
     if Player then
@@ -103,13 +94,12 @@ QBCore.Functions.CreateCallback('atmrobbery:checkItem', function(source, cb, ite
     end
 end)
 
--- Remove hacking phone after successful hack
 RegisterNetEvent('atm_robbery:removeHackingPhone')
 AddEventHandler('atm_robbery:removeHackingPhone', function()
     local src = source
     local Player = QBCore.Functions.GetPlayer(src)
     if Player then
-        if Player.Functions.RemoveItem("hacking_phone", 1) then
+        if Player.Functions.RemoveItem(Config.RequiredItem, 1) then
             showNotification(src, 'Success', 'You used 1 hacking phone!', 'success')
             TriggerClientEvent('inventory:client:ItemBox', src, QBCore.Shared.Items["hacking_phone"], "remove")
         else

@@ -1,0 +1,12 @@
+["hacking_phone"] = {
+    name = "hacking_phone",
+    label = "Hacking Phone",
+    weight = 200,
+    type = "item",
+    image = "hacking_phone.png", -- Make sure this image exists in your inventory images folder
+    unique = false,
+    useable = true,
+    shouldClose = true,
+    combinable = nil,
+    description = "A phone used for hacking ATMs."
+},
